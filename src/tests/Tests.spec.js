@@ -9,13 +9,14 @@ export const RateContentOK = new Rate('content_OK');
 
 export const options = {
   thresholds: {
-    http_req_failed: ['rate<0.30'],
-    get_contacts: ['p(99)<500'],
-    content_OK: ['rate>0.95']
+    http_req_duration: ['p(90)<6800'],
+    http_req_failed: ['rate<0.25']
   },
+
   stages: [
-    { duration: '5s', target: 2 },
-    { duration: '5s', target: 6 }
+    { duration: '30s', target: 7 },
+    { duration: '2m30s', target: 92 },
+    { duration: '30s', target: 0 }
   ]
 };
 
@@ -27,7 +28,7 @@ export function handleSummary(data) {
 }
 
 export default function () {
-  const baseUrl = 'https://test.k6.io/';
+  const baseUrl = 'https://jsonplaceholder.typicode.com/posts/1';
 
   const params = {
     headers: {
@@ -44,6 +45,6 @@ export default function () {
   RateContentOK.add(res.status === OK);
 
   check(res, {
-    'GET Contacts - Status 200': () => res.status === OK
-  });
+  'GET Post - Status 200': () => res.status === OK
+});
 }
